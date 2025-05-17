@@ -1,0 +1,111 @@
+/* Color Theme */
+:root {
+    /* --background-color: #f8f9fa; */
+    /* --text-color: #222; */
+    --link-color: #007bff;
+    --border-color: #e1e4e8;
+    --code-bg: #f1f1f1c4; */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Apply Base Styles */
+body {
+    background-color: var(--background-color);
+    /* color: var(--text-color); */
+    font-family: 'Inter', sans-serif;
+    line-height: 1.75;
+    margin: 0;
+    padding: 40px 20px;
+    max-width: 800px;
+    margin: auto;
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* Links */
+a, #email-link {
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+
+/* Code Blocks */
+pre, code {
+    background-color: var(--code-bg);
+    /* color: var(--text-color); */
+    padding: 5px;
+    border-radius: 6px;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+}
+
+/* Blockquotes */
+blockquote {
+    border-left: 4px solid var(--border-color);
+    padding: 10px 15px;
+    margin: 20px 0;
+    font-style: italic;
+    background: #fdfdfd;
+}
+
+/* Horizontal Lines */
+hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 30px 0;
+}
+
+/* Navigation */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Footer */
+footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    font-size: 14px;
+    text-align: center;
+    color: var(--text-color);
+    border-top: 1px solid var(--border-color);
+}
+
+img, video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em 0;
+  }
+
+
+/* Modern Card Styling */
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    margin: 20px 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    body {
+        padding: 20px;
+    }
+}
+
+small {
+    color: #747474;
+}
