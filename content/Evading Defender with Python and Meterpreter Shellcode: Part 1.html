@@ -211,7 +211,10 @@
 <p><video src="img/python-loader-demo_fast.webm" controls=""><a href="img/python-loader-demo_fast.webm">Video</a></video> <small>Demo: Executing the loader and running commands in the newly established meterpreter session</small></p>
 <p><img src="img/borat-great-success.jpg" /></p>
 <h3 id="detection-results-are-even-better-than-expected">Detection results are even better than expected</h3>
-<p>I packed the Python loader into an executable using <a href="https://pyinstaller.org/en/stable/" target="_blank">pyinstaller</a> and ran it through a quick test. I used a mix of free antivirus products and one EDR.<br> For each security solution, I tested both the raw loader.py executed via python.exe and the packed loader.exe version generated with pyinstaller.<br> The results were surprising: <strong>only 1 out of 8 tools actually stopped the loader from running.</strong> Bitdefender was the only one that blocked it completely. The others either missed it entirely or only blocked the executable.</p>
+<p>I packed the Python loader into an executable using <a href="https://pyinstaller.org/en/stable/" target="_blank">pyinstaller</a> and ran it through a quick test.</p>
+<p><small>Update (May 18, 2025): added pyinstaller and updated chart below. pyinstaller, not py2exe was used.</small></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ex">python3</span> -m PyInstaller -F loader.py -i <span class="st">&quot;icon.ico&quot;</span> --noconsole</span></code></pre></div>
+<p>I used a mix of free antivirus products and one EDR.<br> For each security solution, I tested both the raw loader.py executed via python.exe and the packed loader.exe version generated with pyinstaller.<br> The results were surprising: <strong>only 1 out of 8 tools actually stopped the loader from running.</strong> Bitdefender was the only one that blocked it completely. The others either missed it entirely or only blocked the executable.</p>
 <p><img src="img/detection-results.png" /> <small>The table shows that python.exe+loader.py is only detected by Bitdefender</small></p>
 <p>This was unexpected. Based on how the loader works and the fact that py2exe leaves many artifacts in the binary, I anticipated a much worse outcome, full detection (all red) for the .exe version, and at least partial detection for running loader.py with python.exe.</p>
 <p><img src="img/meterpreter-sessions.png" /> <small>Lots of meterpreter sessions arrived. 127.0.0.1 is the source IP because the redirector is deployed on the same machine. This should be fixed by adding the X-Forwarded-for header in the redirecrtor config</small></p>
@@ -234,12 +237,12 @@
 <h4 id="detection-implementing-a-basic-use-case-in-elastic-edr">Detection: Implementing a basic use-case in Elastic EDR</h4>
 <p><strong>Note:</strong> Many EDRs come with the following or some of the following use-cases pre-installed.</p>
 <p>In Elastic EDR’s default configuration, options are limited because ETW and Sysmon data are not ingested. However, with a creative approach, it is still possible to create a reliable detection rule for the loader with a low false positive rate.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>    process.executable.text : <span class="ot">&quot;\\users&quot;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    <span class="kw">or</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>    process.executable.text: <span class="ot">&quot;\\windows\\temp&quot;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>    ) <span class="kw">and</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>dll.name: <span class="ot">&quot;_ctypes.pyd&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>    process.executable.text : <span class="ot">&quot;\\users&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>    <span class="kw">or</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>    process.executable.text: <span class="ot">&quot;\\windows\\temp&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>    ) <span class="kw">and</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>dll.name: <span class="ot">&quot;_ctypes.pyd&quot;</span></span></code></pre></div>
 <p>This rule checks for executables running from user-writable paths that load the _ctypes.pyd library. The filename is not included in the condition, as it can be easily changed. Signature checking for the Python binary (signed by “Python Software Foundation”) could be useful, but would exclude binaries created with py2exe or PyInstaller.</p>
 <p>The rule successfully detected the loader in both forms: as a compiled executable and as a script executed with python.exe. Alerts were generated in Elastic SIEM for both.</p>
 <p><img src="img/python-loader-alerts.png" /> <small>Screenshot of the alerts for our python loader in an elastic siem</small></p>
